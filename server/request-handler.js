@@ -11,8 +11,8 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
-var storage = {};
-storage.results = [{username: 'fred', text: 'hello', objectId: '0' }];
+// var storage = {};
+// storage.results = [{username: 'fred', text: 'hello', objectId: '0' }];
 var fs = require('fs');
 
 
@@ -55,24 +55,40 @@ var requestHandler = function(request, response) {
 
   if (request.url === '/classes/messages') {
     if (request.method === 'GET') {
-      response.end(JSON.stringify(storage));
+      fs.readFile(__dirname + '/messages.txt', 'utf-8', function(err, data) {
+        if (err) {
+          response.writeHead(404);
+          response.end();
+        } else {
+          data = JSON.parse('[' + data + ']');
+          response.writeHead(200, headers);
+          response.end(JSON.stringify({results: data}));
+        }
+      });
     } else if (request.method ==='POST') {
       request.on('data', function(message) {
         var message = JSON.parse(message);
-        message.objectId = storage.results.length;
-        storage.results.push(message);
+        message.objectId = hashCode(message.text);
+        fs.appendFile(__dirname + '/messages.txt', ',' + JSON.stringify(message), 'utf-8', function(err) {
+          if(err) {
+            response.writeHead(404);
+          } else {
+            response.writeHead(201, headers);
+          }
+        });
       });
 
       request.on('end', function() {
-        response.writeHead(201, headers);
-        response.end('{"success" : "Updated Successfully", "status" : 200}');
+        response.end('{"success" : "Updated Successfully", "status" : 201}');
       });
     } else if (request.method === 'OPTIONS') {
       headers['Content-Type'] = 'httpd/unix-directory';
       response.end();
-      // response.writeHead(200, )
     }
   } else if (request.url) {
+    if (request.url === '/') {
+      request.url = '/client/index.html';
+    }
     var filepath = '' + request.url;
     fs.readFile(filepath.slice(1), function(err, html) {
       if (err) {
@@ -115,5 +131,17 @@ var defaultCorsHeaders = {
   "access-control-allow-headers": "content-type, accept",
   "access-control-max-age": 10 // Seconds.
 };
+
+//credit to http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
+var hashCode = function(str){
+    var hash = 0;
+    if (str.length == 0) return hash;
+    for (i = 0; i < str.length; i++) {
+        char = str.charCodeAt(i);
+        hash = ((hash<<5)-hash)+char;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash;
+}
 
 module.exports.requestHandler = requestHandler;
