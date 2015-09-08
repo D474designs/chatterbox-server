@@ -12,7 +12,9 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 var storage = {};
-storage.results = [];
+storage.results = [{username: 'fred', text: 'hello', objectId: '0' }];
+var fs = require('fs');
+
 
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
@@ -45,6 +47,8 @@ var requestHandler = function(request, response) {
   // other than plain text, like JSON or HTML.
 
   headers['Content-Type'] = "application/json";
+  console.log(__dirname);
+
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
   response.writeHead(statusCode, headers);
@@ -68,6 +72,19 @@ var requestHandler = function(request, response) {
       response.end();
       // response.writeHead(200, )
     }
+  } else if (request.url) {
+    var filepath = '' + request.url;
+    fs.readFile(filepath.slice(1), function(err, html) {
+      if (err) {
+        console.log(request.url);
+        console.log(err);
+      } else if (html) {
+        headers['Content-Type'] = "text/html";
+        response.writeHead(200, headers);
+        response.write(html);
+        response.end();
+      }
+    }); 
   } else {
     response.writeHead(404, headers);
     response.end();

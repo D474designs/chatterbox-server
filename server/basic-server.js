@@ -2,6 +2,7 @@
 
 var requestHandler = require('./request-handler.js')
 var http = require("http");
+var fs = require('fs');
 
 
 // Every server needs to listen on a port with a unique number. The
