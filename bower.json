@@ -1,0 +1,26 @@
+{
+  "name": "chatterbox",
+  "version": "1.0.0",
+  "homepage": "https://github.com/garysye/2015-08-chatterbox-server",
+  "authors": [
+    "Amy",
+    "Gary"
+  ],
+  "description": "chat client",
+  "keywords": [
+    "chat"
+  ],
+  "license": "HR",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "client/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4"
+  }
+}

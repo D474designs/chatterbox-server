@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Chatterbox Mocha Test</title>
+</head>
+<body>
+
+
+
+	<!-- libraries -->
+	<script src="node_modules/chai/lib/chai.js"></script>
+	<script src="node_modules/mocha/lib/mocha.js"></script>
+
+	<!-- source files -->
+	<script src="server/basic-server.js"></script>
+	<script src="server/request-handler.js"></script>
+
+	<!-- mocha -->
+	<script>
+	  mocha.setup('bdd');
+      var expect = chai.expect;
+      $(function() {
+        window.mochaPhantomJS ? mochaPhantomJS.run() : mocha.run();
+      });
+    </script>
+
+	<!-- Spec scripts -->
+	<script src="server/spec/LiveServerIntegrationSpec.js"></script>
+	<script src="server/spec/ServerSpec.js"></script>
+	<script src="server/spec/Stubs.js"></script>
+
+</body>
+</html>
